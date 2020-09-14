@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Leaflet Map</title>
+    <!-- External Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <!--title & subtitle-->
+    </header>
+
+    <!-- Our web map and content will go here -->
+    <div id="map" style="width: 100%; height: 550px"></div>
+    <!-- Add the Leaflet JavaScript library -->
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+
+    <footer>
+        <!--marginal & author details-->
+    </footer>
+    <script>
+        // Create variable to hold map element, give initial settings to map
+        var map = L.map('map', {
+            center: [-1.292343, 36.821551],
+            zoom: 7
+        });
+        // Add OpenStreetMap tile layer to map element -1.292343, 36.821551
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>'
+        }).addTo(map);
+
+        //Get JSON data
+        var restaurants = $.getJSON({
+            'url': "data/restaurants.json",
+            'async': false
+        });
+        restaurants = JSON.parse(restaurants.responseText);
+
+        //bind coordinates to popups on mouseover
+        for (i in restaurants) {
+            var latlng = L.latLng({
+                lat: restaurants[i].address.coord[1],
+                lng: restaurants[i].address.coord[0]
+            });
+
+            var marker = L.marker(latlng).bindPopup(`Name: ${restaurants[i].name} <br> Cuisine: ${restaurants[i].cuisine}`);
+            marker.on('mouseover', function(e) {
+                this.openPopup();
+            });
+            marker.on('mouseout', function(e) {
+                this.closePopup();
+            });
+            marker.addTo(map);
+
+
+        }
+    </script>
+</body>
+
+</html>
